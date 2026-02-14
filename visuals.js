@@ -7,17 +7,6 @@ function setup() {
   pixelDensity(2);
   frameRate(60);
 
-
-
-
-  // Calculate all point positions once per frame
-  state.pointsGeometry = new p5.Geometry();
-  
-  // Add 10,000 vertices (these will be instanced)
-  for (let i = 0; i < ITERATIONS_PER_FRAME; i++) {
-    state.pointsGeometry.vertices.push(createVector(0, 0, 0)); // placeholder
-  }
-  
   state.lastSideMatrix = Array(state.visitors.length).fill(null).map(() => Array(state.visitors.length).fill(false));
   
   // Initialize entropy grid

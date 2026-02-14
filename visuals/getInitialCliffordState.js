@@ -16,9 +16,6 @@ function getInitialCliffordState() {
     t: 0,
     dt: 0.000001,
 
-    pointsGeometry: null, // appears to be initialized then unused
-
-    resonanceSliceFrequencies: [73.42, 87.31, 110, 130.81, 82.41, 98], // appears to be unused
     resonanceSlices: [],
     densityThreshold: ITERATIONS_PER_FRAME * 0.05,
 

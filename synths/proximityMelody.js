@@ -125,3 +125,7 @@ class ProximityMelody {
 function random(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
+
+function map(value, inMin, inMax, outMin, outMax) {
+  return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+}
