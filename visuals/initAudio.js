@@ -38,9 +38,11 @@ async function initAudio(state) {
       testSynth.dispose();
       console.log("✅ Synth creation test passed");
       
-      // Initialize Synths ONLY after user gesture
       const darkPad = new DarkAmbientPad(); 
-      state.resonanceSlices.push(...SCALE_NOTES.map(note => new ResonanceSlice(note, darkPad)))
+      SCALE_NOTES.forEach(note => {
+        darkPad.createVoice(note, new Tone.Gain(0));
+        state.resonanceSlices.push(new ResonanceSlice(note));
+      });
 
       console.log("Loading samples...");
       hummingWavesSampler    = new AbstractHummingSampler("http://localhost:8080/sample");  // Use full URL

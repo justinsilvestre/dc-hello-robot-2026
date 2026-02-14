@@ -65,14 +65,46 @@ class DarkAmbientPad {
     synth.connect(volumeGate);
     volumeGate.connect(this.vibrato);
     
+    console.log(`Playing DarkAmbientPad note: ${note}`);
     // Trigger the note and leave it on
     synth.triggerAttack(note);
     
-    this.voices.set(note, synth);
+    this.voices.set(note, {synth, volumeGate});
+  }
+
+  adjustVoiceVolume(note, sliceHitCount) {
+    const voice = this.voices.get(note)
+    if (!voice) {
+      console.error(`No voice found for note ${note}`);
+      return;
+    }
+
+    // resonanceSlices[i].updateSound(i, resonanceSlices);
+    let targetVolume = 0;
+    if (sliceHitCount > DENSITY_THRESHOLD) {
+      targetVolume = map(
+        sliceHitCount,
+        DENSITY_THRESHOLD,
+        ITERATIONS_PER_FRAME * 0.5,
+        0,
+        0.15
+      );
+      targetVolume = Math.pow(targetVolume, 2) * 6;
+      targetVolume = constrain(targetVolume, 0, 0.015);
+      targetVolume *= MASTER_VOLUME;
+    }
+
+    // Smoothly ramp volume (no trigger/release)
+    voice.volumeGate.gain.rampTo(targetVolume, 0.2);
+    
+    return targetVolume;
   }
   
   dispose() {
-    this.voices.forEach(synth => synth.dispose());
+    this.voices.forEach(v => {
+      v.synth.dispose()
+      v.volumeGate.dispose();
+    });
     this.vibrato.dispose();
     this.filter.dispose();
     this.filterLFO.dispose();

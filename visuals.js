@@ -36,8 +36,6 @@ function resetSystem() {
 }
 function draw() {
   const { visitors, resonanceSlices } = state;
-
-  console.log("Draw call")
   // WebGL puts (0, 0) at the center of the sketch 
   // Therefore, we move origin to top-left
   // translate(-width/2, -height/2); 
@@ -63,7 +61,7 @@ function draw() {
     }
   }
 
-  strokeWeight(1);
+  strokeWeight(0.9);
   
   state.entropyOccupiedCount = 0;
   let minX = 999, maxX = -999, minY = 999, maxY = -999;
@@ -209,7 +207,20 @@ function draw() {
   }
   
   for (let i = 0; i < resonanceSlices.length; i++) {
-    resonanceSlices[i].updateSound(i, resonanceSlices);
+    const slice = resonanceSlices[i]
+
+    const targetVolume = instruments.darkPad.adjustVoiceVolume(slice.note, slice.hitCount);
+
+    // Visual feedback
+    if (slice.hitCount > DENSITY_THRESHOLD) {
+      let alpha = map(targetVolume, 0, 0.15, 0, 10);
+      alpha = constrain(alpha, 0, 1);
+
+      fill(255, 255, 255, alpha);
+      noStroke();
+      let colWidth = width / resonanceSlices.length;
+      rect(i * colWidth, 0, colWidth, height);
+    }
   }
 }
 
@@ -221,16 +232,16 @@ function windowResized() {
 function mousePressed() {
   if (state.manualVisitor) {
     // Remove existing manual visitor
-    const index = visitors.indexOf(state.manualVisitor);
+    const index = state.visitors.indexOf(state.manualVisitor);
     if (index > -1) {
-      visitors.splice(index, 1);
+      state.visitors.splice(index, 1);
       console.log(`➖ Removed manual visitor at (${state.manualVisitor.pos.x.toFixed(1)}, ${state.manualVisitor.pos.y.toFixed(1)})`);
     }
-    visitorIdMap.delete(MANUAL_VISITOR_ID);
+    state.visitorIdMap.delete(MANUAL_VISITOR_ID);
     state.manualVisitor = null;
     
     // Update lastSideMatrix size
-    state.lastSideMatrix = Array(visitors.length).fill(null).map(() => Array(visitors.length).fill(false));
+    state.lastSideMatrix = Array(state.visitors.length).fill(null).map(() => Array(state.visitors.length).fill(false));
   } else {
     // Add new manual visitor at mouse position
     const frequencies = [261.63, 329.63, 392.00, 440.00, 493.88, 523.25];
@@ -243,7 +254,7 @@ function mousePressed() {
     instruments.proximityPad.createVoice(SCALE_NOTES[freqIndex], state.manualVisitor.volumeGate);
     
     state.visitors.push(state.manualVisitor);
-    visitorIdMap.set(MANUAL_VISITOR_ID, state.manualVisitor);
+    state.visitorIdMap.set(MANUAL_VISITOR_ID, state.manualVisitor);
     console.log(`➕ Added manual visitor at (${mouseX.toFixed(1)}, ${mouseY.toFixed(1)})`);
     
     // Update lastSideMatrix size
