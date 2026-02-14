@@ -1,0 +1,47 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+}
+
+#visuals {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#start {
+  position: fixed;
+  z-index: 1000;
+  padding: 5px;
+  margin: 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* Hide scrollbars in fullscreen */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Fullscreen specific styles */
+:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+}
+
+:-moz-full-screen {
+  width: 100%;
+  height: 100%;
+}
+
+:fullscreen {
+  width: 100%;
+  height: 100%;
+}
+
+
