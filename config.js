@@ -24,3 +24,13 @@ const SOFTENING            = 0.0002;
 const DENSITY_THRESHOLD = ITERATIONS_PER_FRAME * 0.05;
 
 const MAX_VISITORS = 4;
+
+// Visitor visual configuration
+const VISITOR_RADIUS = 40;           // Increased from 40
+const VISITOR_OUTLINE_THICKNESS = 3; // Configurable outline thickness
+const VISITOR_OUTLINE_OPACITY = 30;  // Outline opacity
+
+// Particle visual configuration
+const PARTICLE_SIZE = 2;           // Particle stroke weight (was 0.9)
+
+const MANUAL_VISITOR_ID = 'manual-test-visitor';

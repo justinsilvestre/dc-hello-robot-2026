@@ -1,103 +1,92 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
-<head>
+  <head>
+    <!-- g sgrength, dt, abcd -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>visuals</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/15.1.22/Tone.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tonal/browser/tonal.min.js"></script>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
 
-  <!-- g sgrength, dt, abcd -->
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>visuals</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/15.1.22/Tone.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tonal/browser/tonal.min.js"></script>
-  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-  <!-- <script src="/socket.io/socket.io.js"></script> -->
+    <script src="config.js"></script>
+    <script src="synths/bass.js"></script>
+    <script src="synths/darkPad.js"></script>
+    <script src="synths/proximityPad.js"></script>
+    <script src="synths/proximityMelody.js"></script>
+    <script src="synths/arpeggioHumSampler.js"></script>
+    <script src="synths/abstractHumSampler.js"></script>
+    <script src="synths/poemSampler.js"></script>
+    <script src="visuals/getInitialCliffordState.js"></script>
+    <script src="visuals/initAudio.js"></script>
+    <script src="visuals/listenForOscMessages.js"></script>
+    <script src="visuals/Visitor.js"></script>
+    <script src="visuals/ResonanceSlice.js"></script>
+    <script src="visuals.js"></script>
 
-  <script src="config.js"></script>
-  <script src="synths/bass.js"></script>
-  <script src="synths/darkPad.js"></script>
-  <script src="synths/proximityPad.js"></script>
-  <script src="synths/proximityMelody.js"></script>
-  <script src="synths/arpeggioHumSampler.js"></script>
-  <script src="synths/abstractHumSampler.js"></script>
-  <script src="synths/poemSampler.js"></script>
-  <script src="visuals.js"></script>
-  
-  <link rel="stylesheet" href="style.css">
-  <script>
-    let audioReady = false;
+    <link rel="stylesheet" href="style.css" />
+    <script>
+      let audioReady = false;
 
-    window.addEventListener('load',  () => {
-      const startButton = document.getElementById('start');
-
-      startButton.addEventListener('click',async () => {
-        console.log("Start button clicked", "audio ready?", audioReady);
-        
-        if (audioReady) {
-          // Audio is already initialized, just go fullscreen
-          console.log("Audio already ready, entering fullscreen...");
-          const elem = document.documentElement;
-          if (elem.requestFullscreen) {
-            elem.requestFullscreen();
-          } else if (elem.webkitRequestFullscreen) { // Safari
-            elem.webkitRequestFullscreen();
-          } else if (elem.mozRequestFullScreen) { // Firefox
-            elem.mozRequestFullScreen();
-          }
-          startButton.style.display = 'none';
-          return;
+      function requestFullscreen() {
+        const documentElement = document.documentElement;
+        if (documentElement.requestFullscreen) {
+          documentElement.requestFullscreen();
+        } else if (documentElement.webkitRequestFullscreen) {
+          // Safari
+          documentElement.webkitRequestFullscreen();
+        } else if (documentElement.mozRequestFullScreen) {
+          // Firefox
+          documentElement.mozRequestFullScreen();
         }
 
-        console.log("Starting Audio Context...");
-        Tone.setContext(new Tone.Context({
-          latencyHint: "playback",
-          lookAhead: 0.1,
-          latencyHint: 0.5,
-          updateInterval: 0.05,
-          sampleRate: 44100
-        }));
-        console.log("Audio Context Configured:", Tone.getContext());
-        // Ensure Tone is started
-        
-        console.log(initAudio);
-        await Tone.start();
-        console.log("Audio Context Started");
-
-        // Initialize the sketch's audio components
-        if (typeof initAudio === 'function') {
-          initAudio();
+        const startButton = document.getElementById("start");
+        if (startButton) {
+          startButton.style.display = "none";
         }
-        console.log("Audio Initialized");
+      }
 
-        audioReady = true;
+      window.addEventListener("load", () => {
         
-        // Enter fullscreen mode
-        const elem = document.documentElement;
-        if (elem.requestFullscreen) {
-          elem.requestFullscreen();
-        } else if (elem.webkitRequestFullscreen) { // Safari
-          elem.webkitRequestFullscreen();
-        } else if (elem.mozRequestFullScreen) { // Firefox
-          elem.mozRequestFullScreen();
-        }
-        
-        // Hide the button after starting
-        startButton.style.display = 'none';
-      });
-      
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'h' || e.key === 'H') {
-          if (startButton.style.display === 'none') {
-            startButton.style.display = 'block';
+        const state = getInitialCliffordState()
+        listenForOscMessages((positions) => updateVisitors(state, positions));
+
+        const startButton = document.getElementById("start");
+
+        startButton.addEventListener("click", async () => {
+          console.log("Start button clicked", "audio ready?", audioReady);
+
+          if (audioReady) {
+            console.log("Audio already ready, entering fullscreen...");
+            requestFullscreen();
           } else {
-            startButton.style.display = 'none';
+            initAudio(state).then((instruments) => {
+              audioReady = true;
+              console.log("Audio Initialized");
+
+              initializeP5Sketch(instruments, state);
+
+              requestFullscreen();
+            });
           }
-        }
+        });
+
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "h" || e.key === "H") {
+            if (startButton.style.display === "none") {
+              startButton.style.display = "block";
+            } else {
+              startButton.style.display = "none";
+            }
+          }
+        });
       });
-    });
-  </script>
-</head>
-<body>
-  <button id="start">Fullscreen</button>
-  <div id="visuals"></div>
-</body>
+    </script>
+  </head>
+  <body>
+    <button id="start">Fullscreen</button>
+    <div id="visuals"></div>
+  </body>
 </html>
