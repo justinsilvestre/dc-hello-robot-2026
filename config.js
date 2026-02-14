@@ -34,3 +34,5 @@ const VISITOR_OUTLINE_OPACITY = 30;  // Outline opacity
 const PARTICLE_SIZE = 2;           // Particle stroke weight (was 0.9)
 
 const MANUAL_VISITOR_ID = 'manual-test-visitor';
+
+const LOG_PLAYBACK = true; // log when synths are triggered for debugging

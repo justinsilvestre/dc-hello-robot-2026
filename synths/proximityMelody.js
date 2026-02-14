@@ -85,6 +85,8 @@ class ProximityMelody {
 
           if (random(1) > 0.7) note = Tone.Frequency(note).transpose(random() > 0.5 ? 12 : -12);
           
+          if (LOG_PLAYBACK)
+          console.log(`Playing ProximityMelody note: ${note} at time ${time}`);
           this.synth.triggerAttackRelease(note, "8n", time);
         }
       }
@@ -118,4 +120,8 @@ class ProximityMelody {
     this.filter.dispose();
     this.gain.dispose();
   }
+}
+
+function random(array) {
+  return array[Math.floor(Math.random() * array.length)];
 }

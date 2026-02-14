@@ -109,19 +109,29 @@ class BassSynth {
     note = Tone.Frequency(note).transpose(-12).toNote();
     // Play main note
     this.mainSynth.triggerAttackRelease(note, duration, time);
-
+    
     // Play sub-bass one octave lower
     const subNote = Tone.Frequency(note).transpose(-24).toNote();
     this.subSynth.triggerAttackRelease(subNote, duration, time);
+    if (LOG_PLAYBACK) {
+      console.log(`Playing bass note: ${note} at time ${time} for duration ${duration}`);
+      console.log(`Playing subbass note: ${subNote} at time ${time} for duration ${duration}`);
+    }
   }
 
   triggerAttack(note, time) {
+    if (LOG_PLAYBACK) {
+      console.log(`Playing attack for bass note: ${note} at time ${time}`);
+      console.log(`Playing attack for subbass note: ${Tone.Frequency(note).transpose(-24).toNote()} at time ${time}`);
+    }
     this.mainSynth.triggerAttack(note, time);
     const subNote = Tone.Frequency(note).transpose(-36).toNote();
     this.subSynth.triggerAttack(subNote, time);
   }
 
   triggerRelease(time) {
+    console.log(`Playing release for bass synths at time ${time}`);
+    console.log(`Playing release for subbass synth at time ${time}`);
     this.mainSynth.triggerRelease(time);
     this.subSynth.triggerRelease(time);
   }

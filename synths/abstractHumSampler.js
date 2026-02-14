@@ -186,8 +186,10 @@ class AbstractHummingSampler {
       if (targetVol > 0.01 && player.state !== "started") {
         // Random offset in sample for variation
         let offset = random(0, this.bufferDuration * 0.3);
+        console.log(`Playing hum sample ${i} with target volume ${targetVol.toFixed(3)} and filter freq ${targetFilterFreq.toFixed(1)} Hz at offset ${offset.toFixed(2)}s`);
         player.start(Tone.now(), offset);
       } else if (targetVol < 0.01 && player.state === "started") {
+        console.log(`Stopping hum sample player ${i} at time ${Tone.now()}`);
         player.stop(Tone.now() + 4); // Fade out over 4 seconds
       }
     });
@@ -208,6 +210,7 @@ class AbstractHummingSampler {
       chain.gain.gain.rampTo(0.05, 6.0, Tone.now() + 2);
       
       if (player.state !== "started") {
+        console.log(`Playing wave hum sample with player ${i} with burst volume ${burstVol.toFixed(3)} at time ${Tone.now()}`);
         player.start(Tone.now(), random(0, this.bufferDuration * 0.5));
       }
     });

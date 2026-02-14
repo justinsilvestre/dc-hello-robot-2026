@@ -84,6 +84,8 @@ class PoemSampler {
     
     if (Date.now() - this.lastTriggered < this.cooldown) return;
 
+    if (LOG_PLAYBACK)
+    console.log(`Playing poem sampler note: ${this.notes[this.noteIndex]} at time ${Tone.now()}`);
     this.sampler.triggerAttackRelease(this.notes[this.noteIndex], "1n");
 
     this.noteIndex += 1;
