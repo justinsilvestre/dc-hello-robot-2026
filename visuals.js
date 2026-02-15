@@ -154,6 +154,7 @@ function draw() {
   instruments.hummingArpeggioSampler.update(state.currentEntropy);
   instruments.poemSampler.update(state.screenCentroidX);
   
+  let proximityMelodyDistance = null;
   for (let i = 0; i < visitors.length; i++) {
     let v1 = visitors[i];
 
@@ -170,9 +171,7 @@ function draw() {
         let midY = (v1.pos.y + v2.pos.y) / 2;
         let radius = v1.radius + v2.radius + d/4;
   
-        if (LOG_PLAYBACK)
-          console.log(`Playing proximity melody for visitors ${v1.id} and ${v2.id} - distance: ${d.toFixed(1)}px`);
-        instruments.proximityMelody.update(i, j, d);
+        proximityMelodyDistance = d;
       }
       
       // Centroid has crossed a line connecting two visitors
@@ -188,6 +187,16 @@ function draw() {
 
       state.lastSideMatrix[i][j] = currentSide;
     }
+  }
+  
+  if (proximityMelodyDistance !== null) {
+    if (LOG_PLAYBACK)
+      console.log(`Playing proximity melody - distance: ${proximityMelodyDistance.toFixed(1)}px`);
+    instruments.proximityMelody.update(proximityMelodyDistance)
+  } else {
+    if (LOG_PLAYBACK)
+      console.log(`No visitors in proximity - fading out proximity melody`);
+    instruments.proximityMelody.gain.gain.rampTo(0, 0.5);
   }
   
   // Update all synths

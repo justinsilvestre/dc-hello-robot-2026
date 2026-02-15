@@ -100,7 +100,7 @@ class ProximityMelody {
     }, "16n");
   }
 
-  update(visitorIndex1, visitorIndex2, distance) {
+  update(distance) {
     const volume = map(constrain(distance, 0, 200), 0, 200, 0.2, 0.0) * MASTER_VOLUME;
     this.gain.gain.rampTo(volume, 0.1);
   }

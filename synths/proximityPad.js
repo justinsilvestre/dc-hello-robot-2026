@@ -86,6 +86,11 @@ class ProximityPad {
   }
   
   createVoice(note, volumeGate) {
+    if (this.voices.has(note)) {
+      console.log(`Voice for note ${note} already exists, skipping creation.`);
+      return
+    }
+    console.log(`Creating ProximityPad voice for note: ${note}`);
     const synth = new Tone.FMSynth({
       harmonicity: 1.5,     // Musical perfect fifth relationship
       modulationIndex: 2,   // Rich but controlled harmonics
