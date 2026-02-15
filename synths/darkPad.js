@@ -65,9 +65,10 @@ class DarkAmbientPad {
     synth.connect(volumeGate);
     volumeGate.connect(this.vibrato);
     
+    if (LOG_PLAYBACK)
     console.log(`Playing DarkAmbientPad note: ${note}`);
     // Trigger the note and leave it on
-    synth.triggerAttack(note);
+      synth.triggerAttack(note);
     
     this.voices.set(note, {synth, volumeGate});
   }

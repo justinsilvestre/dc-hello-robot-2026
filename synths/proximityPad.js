@@ -112,7 +112,7 @@ class ProximityPad {
     synth.connect(volumeGate);
     volumeGate.connect(this.vibrato);
     if (LOG_PLAYBACK)
-    console.log(`Playing ProximityPad note: ${note}`);
+      console.log(`Playing ProximityPad note: ${note}`);
     synth.triggerAttack(Tone.Frequency(note).transpose(12));
     
     this.voices.set(note, synth);

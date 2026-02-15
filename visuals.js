@@ -170,7 +170,8 @@ function draw() {
         let midY = (v1.pos.y + v2.pos.y) / 2;
         let radius = v1.radius + v2.radius + d/4;
   
-        console.log(`Playing proximity melody for visitors ${v1.id} and ${v2.id} - distance: ${d.toFixed(1)}px`);
+        if (LOG_PLAYBACK)
+          console.log(`Playing proximity melody for visitors ${v1.id} and ${v2.id} - distance: ${d.toFixed(1)}px`);
         instruments.proximityMelody.update(i, j, d);
       }
       

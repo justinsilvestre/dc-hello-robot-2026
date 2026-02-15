@@ -76,7 +76,7 @@ class ArpeggioHumSampler {
         const duration = 6;
 
         if (LOG_PLAYBACK)
-        console.log(`Playing arpeggio hum sample with player ${this.nextVoice} at time ${time} with offset ${offset.toFixed(2)}s and duration ${duration}s`);
+          console.log(`Playing arpeggio hum sample with player ${this.nextVoice} at time ${time} with offset ${offset.toFixed(2)}s and duration ${duration}s`);
         player.start(time, offset, duration);
         player.stop(time + duration);  // Removed the +0.5, fadeOut handles it
       }
