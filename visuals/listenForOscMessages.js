@@ -2,7 +2,7 @@
  * When set to `true`,
  * press "I" to add a simulated person and "O" to remove one.
  */
-let simulate = true;
+let simulate = false;
 
 // Simulation state
 const simState = {
